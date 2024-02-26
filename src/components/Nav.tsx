@@ -81,13 +81,34 @@ const Nav = (props: Props) => {
                 <Image src={logo} alt="logo"/>
             </Link>
             <div className='flex items-center gap-8'>
-                <div className="relative group">
-                    <Link href={"#"} className='flex items-center gap-x-2 text-neutral-400 group-hover:text-black/90'>
-                        <p>Features</p>
-                        <MdOutlineKeyboardArrowDown className='rotate-180 group-hover:rotate-0 transition-all' />
-                    </Link>
-                    <div className="absolute right-0 top-10 hidden w-auto flex-col gap-1 rounded-lg bg-white py-3 shadow-md transition-all group-hover:flex ">wwe</div>
-                </div>
+                {
+                  navItems.map((d,i)=> {
+                    return(
+                      <div className="relative group" key={i}>
+                        <Link href={d.link? d.link: "#"} className='flex items-center gap-x-2 text-neutral-400 group-hover:text-black/90'>
+                            <p>{d.label}</p>
+                            {d.children && <MdOutlineKeyboardArrowDown className='rotate-180 group-hover:rotate-0 transition-all' />}
+                        </Link>
+                        {
+                          d.children && <div key={i} className="absolute px-6 right-0 top-7 hidden w-auto flex-col gap-3 rounded-lg bg-white py-3 shadow-md transition-all group-hover:flex group-active:flex">
+                            {
+                              d.children.map((d,i)=>{
+                                return(
+                                  <Link key={i} href={d.link? d.link: "#"} className='flex w-32 gap-3'>
+                                    {
+                                      d.iconImage && <Image src={d.iconImage} alt='img' />
+                                    }
+                                    <span className='text-neutral-400 hover:text-black/90'>{d.label}</span>
+                                  </Link>
+                                )
+                              })
+                            }
+                          </div>
+                        }
+                      </div>
+                    )
+                  })
+                }
             </div>
         </div>
         {/* left */}
