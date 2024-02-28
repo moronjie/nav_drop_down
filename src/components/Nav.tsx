@@ -1,6 +1,9 @@
+"use client"
 import Image from 'next/image'
-import React from 'react'
+import React, { useState } from 'react'
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
+import { RiMenu3Line } from "react-icons/ri";
+import { RiCloseLine } from "react-icons/ri";
 
 import todoImage from "@/assets/images/icon-todo.svg"
 import calendarImage from "@/assets/images/icon-calendar.svg"
@@ -73,14 +76,17 @@ type NavItem = {
   ];
 
 const Nav = (props: Props) => {
+
+  const [showSideBar, setshowSideBar] = useState(false)
+
   return (
-    <div className='flex justify-between items-center w-full max-w-7xl mx-auto px-4 py-6'>
+    <section className='flex justify-between items-center w-full max-w-7xl mx-auto px-4 py-6'>
         {/* right */}
         <div className='flex items-center gap-8'> 
             <Link href={"/"}>
                 <Image src={logo} alt="logo"/>
             </Link>
-            <div className='flex items-center gap-8'>
+            <div className='sm:flex sm:flex-row items-center gap-8 hidden flex-col'>
                 {
                   navItems.map((d,i)=> {
                     return(
@@ -112,14 +118,69 @@ const Nav = (props: Props) => {
             </div>
         </div>
         {/* left */}
-        <div className='flex gap-8 items-center'>
+        <div className='sm:flex gap-8 items-center hidden'>
             <button className='text-neutral-400 hover:text-black/90 capitalize h-fit'>login</button>
             <button className="h-fit rounded-xl border-2 border-neutral-400 px-4 py-2 capitalize text-neutral-400 transition-all hover:border-black hover:text-black/90">
                 Register
             </button>
         </div>
+        <RiMenu3Line className='text-3xl border-neutral-400 hover:text-black/90 sm:hidden' onClick={()=>setshowSideBar(true)} />
+        {showSideBar && <SideNav />}
+    </section>
+  )
+}
+
+export function SideNav() {
+  const [toggleDropDown, settoggleDropDown] = useState(false)
+  const showDropDown = () => {
+    return settoggleDropDown(!toggleDropDown)
+  }
+  return (
+    <div className='fixed justify-end flex top-0 left-0 w-full h-screen bg-black/50 backdrop-blur-2 sm:hidden'>
+        <div className='flex reletive gap-8 flex-col absolute h-full bg-white w-60 py-6'>
+          <div className='flex px-4  justify-end text-3xl border-neutral-400 hover:text-black/90'>
+            <RiCloseLine  />
+          </div>
+          <div className='flex justify-start px-3 gap-3 flex-col'>
+              {
+                navItems.map((d,i)=> {
+                  return(
+                    <div className="relative group" key={i}>
+                      <Link href={d.link? d.link: "#"} className='flex items-center gap-2 text-neutral-400 group-hover:text-black/90' onClick={showDropDown}>
+                          <p>{d.label}</p>
+                          {d.children && <MdOutlineKeyboardArrowDown className={` ${toggleDropDown && " rotate-180"} transition-all`}  />}
+                      </Link>
+                      {
+                        toggleDropDown && d.children && <div key={i} className="px-6 w-auto flex-col transition-all ">
+                          {
+                            d.children?.map((d,i)=>{
+                              return(
+                                <Link key={i} href={d.link?? "#"} className='flex w-32 gap-3 py-2 items-center'>
+                                  {
+                                    d.iconImage && <Image src={d.iconImage} alt='img' />
+                                  }
+                                  <span className='text-neutral-400 hover:text-black/90'>{d.label}</span>
+                                </Link>
+                              )
+                            })
+                          }
+                        </div>
+                      }
+                    </div>
+                  )
+                })
+              }
+          </div>
+          <div className='flex gap-5 items-center justify-center'>
+            <button className='text-neutral-400 hover:text-black/90 capitalize h-fit'>login</button>
+            <button className="h-fit rounded-xl border-2 border-neutral-400 px-4 py-2 capitalize text-neutral-400 transition-all hover:border-black hover:text-black/90">
+                Register
+            </button>
+        </div>
+        </div>
     </div>
   )
 }
+
 
 export default Nav
