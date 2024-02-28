@@ -1,6 +1,6 @@
 "use client"
 import Image from 'next/image'
-import React, { useState } from 'react'
+import React, { useState} from 'react'
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { RiMenu3Line } from "react-icons/ri";
 import { RiCloseLine } from "react-icons/ri";
@@ -11,6 +11,7 @@ import remindersImage from "@/assets/images/icon-reminders.svg"
 import planningImage from "@/assets/images/icon-planning.svg"
 import logo from "@/assets/images/logo.svg"
 import Link from 'next/link'
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 type Props = {}
 type NavItem = {
@@ -78,9 +79,13 @@ type NavItem = {
 const Nav = (props: Props) => {
 
   const [showSideBar, setshowSideBar] = useState(false)
+  const [animationParent] = useAutoAnimate();
+  const hideNav = () => {
+    return setshowSideBar(false)
+  }
 
   return (
-    <section className='flex justify-between items-center w-full max-w-7xl mx-auto px-4 py-6'>
+    <section ref={animationParent} className='flex justify-between items-center w-full max-w-7xl mx-auto px-4 py-6'>
         {/* right */}
         <div className='flex items-center gap-8'> 
             <Link href={"/"}>
@@ -125,21 +130,22 @@ const Nav = (props: Props) => {
             </button>
         </div>
         <RiMenu3Line className='text-3xl border-neutral-400 hover:text-black/90 sm:hidden' onClick={()=>setshowSideBar(true)} />
-        {showSideBar && <SideNav />}
+        {showSideBar && <SideNav hideNav={hideNav} />}
     </section>
   )
 }
 
-export function SideNav() {
+export function SideNav({hideNav}: {hideNav:()=>void}) {
   const [toggleDropDown, settoggleDropDown] = useState(false)
+  const [animationParent] = useAutoAnimate();
   const showDropDown = () => {
     return settoggleDropDown(!toggleDropDown)
   }
   return (
-    <div className='fixed justify-end flex top-0 left-0 w-full h-screen bg-black/50 backdrop-blur-2 sm:hidden'>
+    <div ref={animationParent} className='fixed justify-end flex top-0 left-0 w-full h-screen bg-black/50 backdrop-blur-2 sm:hidden'>
         <div className='flex reletive gap-8 flex-col absolute h-full bg-white w-60 py-6'>
           <div className='flex px-4  justify-end text-3xl border-neutral-400 hover:text-black/90'>
-            <RiCloseLine  />
+            <RiCloseLine onClick={hideNav} />
           </div>
           <div className='flex justify-start px-3 gap-3 flex-col'>
               {
